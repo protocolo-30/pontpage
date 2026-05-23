@@ -1,0 +1,604 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Descubra Seu Nível de Controle</title>
+    <meta name="description" content="Responda 3 perguntas rápidas e descubra seu nível atual. Baseado em método científico.">
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: linear-gradient(135deg, #0F172A 0%, #1E293B 100%);
+            color: #F8FAFC;
+            line-height: 1.6;
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 700px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        /* Hero Section */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 40px 20px 60px;
+        }
+        
+        /* Badge */
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: rgba(37, 99, 235, 0.1);
+            border: 1px solid rgba(37, 99, 235, 0.3);
+            padding: 8px 16px;
+            border-radius: 100px;
+            font-size: 11px;
+            font-weight: 600;
+            color: #60A5FA;
+            margin-bottom: 24px;
+            animation: fadeInDown 0.8s ease;
+            backdrop-filter: blur(10px);
+        }
+        
+        @keyframes fadeInDown {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .badge svg {
+            width: 14px;
+            height: 14px;
+            fill: #60A5FA;
+        }
+        
+        /* Headlines */
+        .headline {
+            font-size: 24px;
+            font-weight: 900;
+            line-height: 1.2;
+            margin-bottom: 12px;
+            letter-spacing: -0.02em;
+            text-align: center;
+            animation: fadeInUp 1s ease 0.2s backwards;
+        }
+        
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .headline .gradient {
+            background: linear-gradient(135deg, #60A5FA, #3B82F6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .subheadline {
+            font-size: 14px;
+            color: #CBD5E1;
+            text-align: center;
+            margin-bottom: 32px;
+            line-height: 1.5;
+            animation: fadeInUp 1s ease 0.4s backwards;
+        }
+        
+        /* Quiz Container */
+        .quiz-container {
+            width: 100%;
+            max-width: 600px;
+            margin: 0 auto;
+            animation: fadeInUp 1s ease 0.6s backwards;
+        }
+        
+        /* Progress Bar */
+        .progress-container {
+            margin-bottom: 24px;
+        }
+        
+        .progress-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        
+        .progress-text {
+            font-size: 12px;
+            font-weight: 600;
+            color: #94A3B8;
+        }
+        
+        .progress-bar {
+            width: 100%;
+            height: 6px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 100px;
+            overflow: hidden;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #2563EB, #60A5FA);
+            border-radius: 100px;
+            transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        /* Question Card */
+        .question-card {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 24px 20px;
+            margin-bottom: 20px;
+            display: none;
+        }
+        
+        .question-card.active {
+            display: block;
+            animation: slideIn 0.5s ease;
+        }
+        
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateX(30px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+        
+        .question-number {
+            font-size: 11px;
+            font-weight: 700;
+            color: #60A5FA;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            margin-bottom: 12px;
+        }
+        
+        .question-text {
+            font-size: 18px;
+            font-weight: 700;
+            color: #F8FAFC;
+            margin-bottom: 24px;
+            line-height: 1.3;
+        }
+        
+        /* Answer Options */
+        .answers {
+            display: grid;
+            gap: 10px;
+        }
+        
+        .answer-btn {
+            width: 100%;
+            padding: 16px 18px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            color: #F8FAFC;
+            font-size: 14px;
+            font-weight: 600;
+            text-align: left;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: 'Inter', sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        .answer-btn:active {
+            background: rgba(37, 99, 235, 0.2);
+            border-color: rgba(37, 99, 235, 0.6);
+            transform: scale(0.98);
+        }
+        
+        /* Result Card */
+        .result-card {
+            display: none;
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 32px 24px;
+            text-align: center;
+        }
+        
+        .result-card.active {
+            display: block;
+            animation: fadeInScale 0.6s ease;
+        }
+        
+        @keyframes fadeInScale {
+            from { opacity: 0; transform: scale(0.9); }
+            to { opacity: 1; transform: scale(1); }
+        }
+        
+        .result-icon {
+            width: 70px;
+            height: 70px;
+            margin: 0 auto 24px;
+            background: linear-gradient(135deg, #2563EB, #1E40AF);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 20px 60px rgba(37, 99, 235, 0.4);
+        }
+        
+        .result-icon svg {
+            width: 35px;
+            height: 35px;
+            fill: white;
+        }
+        
+        .result-label {
+            font-size: 11px;
+            font-weight: 700;
+            color: #60A5FA;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            margin-bottom: 10px;
+        }
+        
+        .result-title {
+            font-size: 26px;
+            font-weight: 900;
+            margin-bottom: 16px;
+            line-height: 1.2;
+        }
+        
+        .result-title .gradient {
+            background: linear-gradient(135deg, #60A5FA, #3B82F6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .result-description {
+            font-size: 14px;
+            color: #CBD5E1;
+            line-height: 1.6;
+            margin-bottom: 32px;
+        }
+        
+        /* CTA Button */
+        .cta-button {
+            display: block;
+            width: 100%;
+            background: linear-gradient(135deg, #2563EB, #1E40AF);
+            color: white;
+            padding: 18px 32px;
+            font-size: 14px;
+            font-weight: 800;
+            text-decoration: none;
+            border-radius: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            box-shadow: 0 12px 40px rgba(37, 99, 235, 0.5);
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+            font-family: 'Inter', sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        .cta-button:active {
+            transform: scale(0.98);
+            box-shadow: 0 8px 30px rgba(37, 99, 235, 0.6);
+        }
+        
+        .cta-button span {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            justify-content: center;
+        }
+        
+        .cta-button svg {
+            width: 18px;
+            height: 18px;
+            fill: white;
+        }
+        
+        /* Medical Disclaimer */
+        .disclaimer {
+            background: rgba(245, 158, 11, 0.1);
+            border: 1px solid rgba(245, 158, 11, 0.3);
+            border-radius: 10px;
+            padding: 16px 18px;
+            margin: 32px auto 0;
+            max-width: 600px;
+        }
+        
+        .disclaimer-content {
+            display: flex;
+            gap: 10px;
+            align-items: start;
+        }
+        
+        .disclaimer-icon {
+            flex-shrink: 0;
+            width: 20px;
+            height: 20px;
+        }
+        
+        .disclaimer-icon svg {
+            width: 20px;
+            height: 20px;
+            fill: #F59E0B;
+        }
+        
+        .disclaimer-text {
+            font-size: 11px;
+            color: #FDE68A;
+            line-height: 1.5;
+        }
+        
+        .disclaimer-text strong {
+            color: #FCD34D;
+            font-weight: 700;
+        }
+        
+        /* Footer */
+        .footer {
+            padding: 32px 20px;
+            text-align: center;
+            color: #64748B;
+            font-size: 11px;
+            line-height: 1.6;
+        }
+        
+        .footer p {
+            margin-bottom: 10px;
+        }
+    </style>
+    
+    <!-- Facebook Pixel Code -->
+    <script>
+    !function(f,b,e,v,n,t,s)
+    {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+    n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+    if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+    n.queue=[];t=b.createElement(e);t.async=!0;
+    t.src=v;s=b.getElementsByTagName(e)[0];
+    s.parentNode.insertBefore(t,s)}(window, document,'script',
+    'https://connect.facebook.net/en_US/fbevents.js');
+    fbq('init', '2329999334496793');
+    fbq('track', 'PageView');
+    fbq('track', 'ViewContent', {
+        content_name: 'Quiz Ponte - Nível de Controle',
+        content_category: 'Quiz',
+        currency: 'BRL'
+    });
+    </script>
+    <noscript><img height="1" width="1" style="display:none"
+    src="https://www.facebook.com/tr?id=2329999334496793&ev=PageView&noscript=1"
+    /></noscript>
+    <!-- End Facebook Pixel Code -->
+</head>
+<body>
+    <section class="hero">
+        <div class="container">
+            <!-- Badge -->
+            <div class="badge">
+                <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M12 2L2 7v10c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V7l-10-5zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm-1-13h2v6h-2zm0 8h2v2h-2z"/>
+                </svg>
+                Baseado em Neurociência
+            </div>
+            
+            <!-- Headlines -->
+            <h1 class="headline">
+                Descubra Seu <span class="gradient">Nível de Controle</span> em 60 Segundos
+            </h1>
+            
+            <p class="subheadline">
+                Responda 3 perguntas rápidas e descubra qual o seu nível atual
+            </p>
+            
+            <!-- Quiz Container -->
+            <div class="quiz-container">
+                <!-- Progress Bar -->
+                <div class="progress-container">
+                    <div class="progress-info">
+                        <span class="progress-text">Pergunta <span id="currentQuestion">1</span> de 3</span>
+                        <span class="progress-text"><span id="progressPercent">33</span>%</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="progressFill" style="width: 33%;"></div>
+                    </div>
+                </div>
+                
+                <!-- Question 1 -->
+                <div class="question-card active" data-question="1">
+                    <div class="question-number">Pergunta 1 de 3</div>
+                    <h2 class="question-text">Quanto tempo você costuma durar durante o sexo?</h2>
+                    <div class="answers">
+                        <button class="answer-btn" data-value="1">Menos de 1 minuto</button>
+                        <button class="answer-btn" data-value="2">1-3 minutos</button>
+                        <button class="answer-btn" data-value="3">3-5 minutos</button>
+                        <button class="answer-btn" data-value="4">Mais de 5 minutos</button>
+                    </div>
+                </div>
+                
+                <!-- Question 2 -->
+                <div class="question-card" data-question="2">
+                    <div class="question-number">Pergunta 2 de 3</div>
+                    <h2 class="question-text">Há quanto tempo isso vem acontecendo?</h2>
+                    <div class="answers">
+                        <button class="answer-btn" data-value="4">Sempre foi assim</button>
+                        <button class="answer-btn" data-value="3">Menos de 1 ano</button>
+                        <button class="answer-btn" data-value="2">1-3 anos</button>
+                        <button class="answer-btn" data-value="1">Mais de 3 anos</button>
+                    </div>
+                </div>
+                
+                <!-- Question 3 -->
+                <div class="question-card" data-question="3">
+                    <div class="question-number">Pergunta 3 de 3</div>
+                    <h2 class="question-text">Isso afeta sua confiança no dia a dia?</h2>
+                    <div class="answers">
+                        <button class="answer-btn" data-value="4">Sim, muito</button>
+                        <button class="answer-btn" data-value="3">Sim, um pouco</button>
+                        <button class="answer-btn" data-value="2">Não muito</button>
+                        <button class="answer-btn" data-value="1">Não afeta</button>
+                    </div>
+                </div>
+                
+                <!-- Result Card -->
+                <div class="result-card" id="resultCard">
+                    <div class="result-icon">
+                        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                        </svg>
+                    </div>
+                    <div class="result-label">Seu Resultado</div>
+                    <h2 class="result-title">Nível: <span class="gradient" id="resultLevel">Intermediário</span></h2>
+                    <p class="result-description" id="resultDescription">
+                        Você está no caminho certo para melhorar. O método científico pode ajudá-lo a desenvolver maior controle e confiança.
+                    </p>
+                    <a href="https://durarmaishub.com" class="cta-button" id="ctaButton">
+                        <span>
+                            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M8 5v14l11-7z"/>
+                            </svg>
+                            ASSISTIR VÍDEO AGORA
+                        </span>
+                    </a>
+                </div>
+            </div>
+            
+            <!-- Medical Disclaimer -->
+            <div class="disclaimer">
+                <div class="disclaimer-content">
+                    <div class="disclaimer-icon">
+                        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/>
+                        </svg>
+                    </div>
+                    <p class="disclaimer-text">
+                        <strong>Aviso Importante:</strong> Este conteúdo é educativo e não substitui aconselhamento médico profissional. Consulte um especialista de saúde para orientações personalizadas.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <footer class="footer">
+        <div class="container">
+            <p>© 2025 Sistema de Controle Total. Todos os direitos reservados.</p>
+            <p>Este site não faz parte do Facebook ou Facebook Inc. Além disso, este site NÃO é endossado pelo Facebook de nenhuma maneira.</p>
+        </div>
+    </footer>
+    
+    <script>
+    let currentQuestion = 1;
+    let answers = [];
+    
+    // Answer buttons
+    const answerBtns = document.querySelectorAll('.answer-btn');
+    answerBtns.forEach(btn => {
+        btn.addEventListener('click', function() {
+            const value = parseInt(this.getAttribute('data-value'));
+            answers.push(value);
+            
+            // Track answer
+            fbq('track', 'CustomizeProduct', {
+                content_name: 'Quiz Resposta ' + currentQuestion,
+                content_category: 'Quiz Progress'
+            });
+            
+            if (currentQuestion < 3) {
+                nextQuestion();
+            } else {
+                showResult();
+            }
+        });
+    });
+    
+    function nextQuestion() {
+        // Hide current
+        document.querySelector('.question-card.active').classList.remove('active');
+        
+        // Next
+        currentQuestion++;
+        
+        // Update progress
+        const progress = (currentQuestion / 3) * 100;
+        document.getElementById('currentQuestion').textContent = currentQuestion;
+        document.getElementById('progressPercent').textContent = Math.round(progress);
+        document.getElementById('progressFill').style.width = progress + '%';
+        
+        // Show next
+        setTimeout(() => {
+            document.querySelector('[data-question="' + currentQuestion + '"]').classList.add('active');
+        }, 100);
+    }
+    
+    function showResult() {
+        // Calculate score
+        const totalScore = answers.reduce((a, b) => a + b, 0);
+        const avgScore = totalScore / answers.length;
+        
+        // Hide progress and questions
+        document.querySelector('.progress-container').style.display = 'none';
+        document.querySelector('.question-card.active').classList.remove('active');
+        
+        // Determine level
+        let level, description;
+        
+        if (avgScore >= 3) {
+            level = "Avançado";
+            description = "Você já possui certa consciência sobre o tema. O método pode ajudá-lo a refinar seu controle e alcançar resultados ainda melhores.";
+        } else if (avgScore >= 2) {
+            level = "Intermediário";
+            description = "Você está no caminho certo para melhorar. O método científico pode ajudá-lo a desenvolver maior controle e confiança.";
+        } else {
+            level = "Iniciante";
+            description = "Este é o momento ideal para começar. O método foi desenvolvido especialmente para quem está nesta fase e busca mudanças reais.";
+        }
+        
+        // Show result
+        document.getElementById('resultLevel').textContent = level;
+        document.getElementById('resultDescription').textContent = description;
+        document.getElementById('resultCard').classList.add('active');
+        
+        // Track completion
+        fbq('track', 'CompleteRegistration', {
+            content_name: 'Quiz Completo - Nível: ' + level,
+            content_category: 'Quiz Result',
+            status: true
+        });
+    }
+    
+    // Track CTA click
+    document.getElementById('ctaButton').addEventListener('click', function() {
+        fbq('track', 'Lead', {
+            content_name: 'Clique Assistir Vídeo - Após Quiz',
+            content_category: 'Button Click',
+            destination_url: 'https://durarmaishub.com'
+        });
+    });
+    </script>
+</body>
+</html>
